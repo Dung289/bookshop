@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<title>Category Table</title>
+</head>
+<body>
+	<div class="container">
+		<h2>Danh sách thể loại</h2>
+		<a th:href = "@{/category/{id} (id = -1)}"
+			class = "btn btn-success col-lg-12"> Add Category</a> 
+		
+		<table class="table">
+	        <thead class="thead-light">
+	        <tr>
+	            <th scope="col">STT</th>
+	            <th scope="col">Category Name</th>
+	            <th scope="col">Action</th>
+	        </tr>
+	        </thead>
+	        <tbody>
+		        <tr th:each="category, iStat : ${categories}">
+		            <th scope="row" th:text="${iStat.index + 1}">1</th>
+		            <td th:text="${category.name}">Larry</td>
+		            
+		            <td> <a th:href = "@{/category/{id} (id = ${category.id})}"
+							class = "btn btn-success"> Edit </a>
+						 <!-- <form th:action="@{/category/delete/{id}(id=${category.id})}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?')">
+	                       		<input type="hidden" name="_method" value="DELETE">
+	                       		<button type="submit" class = "btn btn-danger">Delete</button>
+						 </form> -->
+					</td>
+		        </tr>
+	        </tbody>
+	    </table>
+	</div>
+</body>
+</html>

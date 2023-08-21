@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Book Form</title>
+    
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .form-section {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .form-section .left-section {
+            flex: 1;
+            padding-right: 20px;
+        }
+        h2 {
+        	text-align: center;
+        	margin-bottom: 30px;
+        }
+        
+        .right-section {
+            flex: 1;
+        }
+        
+        .upload-section {
+            margin-top: 20px;
+        }
+        
+        .div1, .div2 {
+        	margin-right: 100px;
+		  	display: inline-block;
+		}
+        
+        .div3, .div4 {
+        	margin-right: 100px;
+		  	display: inline-block;
+		}
+        .uploaded-image {
+            margin-top: 20px;
+            max-width: 300px;
+        }
+        .error-message {
+		    color: red;
+		    margin-bottom: 10px;
+	    }
+	    
+	    #description {
+	    	width: 500px;
+	    	height: 50px;
+	    }
+	    
+	    #title, #author, #release_date, #num_pages, #category{
+	    	width: 200px;
+	    	height: 30px;
+	    }
+	    
+	    #category {
+	    height: 50px
+	    }
+    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h2>Sách</h2>
+        <form th:object="${bookDTO}"  
+        	th:action="@{save/{id}(id=${bookDTO.id})}" 
+        	th:method="${id} < 0 ? POST : PUT" 
+        	enctype="multipart/form-data" 
+        	th:onsubmit="return confirm('Bạn có chắc chắn với cập nhật này?')">
+            <div class="form-section">
+                <div class="left-section">
+                
+                	<div class="form-section error-message" th:if="${error}">
+        				<p th:text="${error}"></p>
+      				</div>
+                    <div class="form-group">
+	                    <label for="title">Tiêu đề</label>
+	                    <input type="text" class="form-control" required th:field="*{title}" name="title" id="title"
+	                           placeholder="Enter title">
+	
+	                </div>
+                    <div class="form-group">
+	                    <label for="author">Tác giả</label>
+	                    <input type="text" class="form-control" required th:field="*{author}" name="author" id="author"
+	                           placeholder="Enter author">
+	                </div>
+                    <div class="form-group">
+	                    <label for="description">Mô tả</label>
+	                    <input type="text" class="form-control" required th:field="*{description}" name="description" id="description"
+	                           placeholder="Enter description">
+	
+	                </div>
+                    <div class="form-group">
+	                    <label for="numPage">Số trang</label>
+	                    <input type="text" class="form-control" required th:field="*{numPage}" name="numPage" id="numPage"
+	                           placeholder="Enter numPage">
+	
+	                </div>
+	                <div class="form-group">
+	                    <label for="price">Giá</label>
+	                    <input type="text" class="form-control" required th:field="*{price}" name="price" id="price"
+	                           placeholder="Enter price">
+	
+	                </div>
+                    <div>
+                        <label for="category">Thể loại:</label> </br>
+                        <select class="form-control" th:field="*{categoryId}" id="category" name="category">
+	                        <option th:each="category :${categories}"
+	                                th:value="${category.id}"
+	                                th:text="${category.name}"
+	                        >
+	                    </select>
+                    </div>
+                </div>
+                
+                <div class="right-section">
+                	<p>Ảnh bìa</p>
+                    <div class="custom-file">
+	                    <input type="file"  class="custom-file-input" name="bookImage" accept="image/jpeg, image/png, image/jpg"  id="bookImage"/>
+	                    <label class="custom-file-label" for="bookImage">Choose file</label>
+	                </div>
+	                <div class="form-group">
+	                    <img id="imgPreview" height="200px" width="200x" th:src="@{${'/bookImages/' + bookDTO.imageName}}" style="margin-top: 20px" alt=" ">
+	                </div>
+	                <input type="hidden" name="imgName" th:value="${bookDTO.imageName}">
+	           	</div>
+                
+            </div>
+            	<input th:if="${id} < 0"  class = "btn btn-success" type="submit" th:value="Add">
+            	<input th:if="${id} >= 0"  class = "btn btn-success" type="submit" th:value="Save">
+        </form>       			
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+	        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+	        crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+	        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+	        crossorigin="anonymous"></script>
+    <script>
+	    function readURL(input){
+	        if(input.files && input.files[0]){
+	            var reader = new FileReader();
+	            reader.onload = function(e){
+	                $('#imgPreview').attr('src', e.target.result).width(100).height(100);
+	            }
+	            reader.readAsDataURL(input.files[0])
+	        }
+	    }
+	    $('#bookImage').change(function(){
+	        readURL(this);
+	    });
+	    $(".custom-file-input").on("change", function() {
+	        var fileName = $(this).val().split("\\").pop();
+	        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+	    });
+	</script>
+</body>
+</html>
+        
+   
