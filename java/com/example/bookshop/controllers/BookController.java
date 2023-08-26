@@ -79,24 +79,26 @@ public class BookController {
 			bookDTO.setQuantitySold(book.getQuantitySold());
 			bookDTO.setImageName(book.getImageName());
 			model.addAttribute("bookDTO", bookDTO);
+
+			List<Review> reviews = reviewServiceImpl.getAllByBook(opBook.get());
+			List<ReviewDTO> reviewDTOs = new ArrayList<ReviewDTO>();
+			
+			for(Review review : reviews) {
+				ReviewDTO reviewDTO = new ReviewDTO();
+				reviewDTO.setId(review.getId());
+				reviewDTO.setUserFullname(review.getUser().getFirstName() + " " + review.getUser().getLastName());
+				reviewDTO.setUserImage(review.getUser().getImageName());
+				reviewDTO.setRate(review.getRate());
+				reviewDTO.setComment(review.getComment());
+				reviewDTOs.add(reviewDTO);
+			}
+			model.addAttribute("reviewDTOs", reviewDTOs);
 		} else {
 			model.addAttribute("bookDTO", new BookDTO());
 		}
 		model.addAttribute("categories", categoryServiceImpl.getAllCategories());
 		model.addAttribute("id", id);
-		List<Review> reviews = reviewServiceImpl.getAllByBook(opBook.get());
-		List<ReviewDTO> reviewDTOs = new ArrayList<ReviewDTO>();
 		
-		for(Review review : reviews) {
-			ReviewDTO reviewDTO = new ReviewDTO();
-			reviewDTO.setId(review.getId());
-			reviewDTO.setUserFullname(review.getUser().getFirstName() + " " + review.getUser().getLastName());
-			reviewDTO.setUserImage(review.getUser().getImageName());
-			reviewDTO.setRate(review.getRate());
-			reviewDTO.setComment(review.getComment());
-			reviewDTOs.add(reviewDTO);
-		}
-		model.addAttribute("reviewDTOs", reviewDTOs);
 		try {
 			String userRole = user.getRole();
 			if (userRole.compareTo("user") == 0)
