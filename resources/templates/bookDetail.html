@@ -66,17 +66,58 @@
 	    #quantity {
 	    	margin-bottom: 20px;
 	    }
+	    .error-message {
+	    	color: red;
+	    	font-size: 20px;
+	    	margin-top: 5px;
+	    }
 	    
+	    .review{
+	    	display: flex;
+	    	margin-bottom: 10px;
+	    }
+	    
+	    .review__image{
+	    	margin-right: 10px;
+	    }
+	    
+	    .imageUser{
+	    	width: 60px;
+	    	height: 60px;
+	    	border-radius: 30px;
+	    }
+	    .comment {
+	    	background-color: antiquewhite;
+	    	width: 500px;
+	    	height: 50px;
+	    	border-radius: 10px;
+	    }
+	    .comment-content {
+	    	padding-left: 10px
+	    }
+	    
+	    .review__infor-top{
+	    	display: flex;
+	    }
+	    
+	    .rate{
+	    	margin-left: 20px;
+	    }
+	    
+	    .rate-score{
+	    	color: red;
+	    	font-size: 16px;
+	    }
     </style>
 </head>
 
 <body>
-	<!-- <header class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<header class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<div class="container">
 			<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 		    	<ul class="navbar-nav">
 		    		<li class="nav-item">
-		          		<a class="nav-link" href="/books">Tất cả sách</a>
+		          		<a class="nav-link" href="/book/">Home</a>
 		        	</li>
 		        	<li class="nav-item">
 		          		<a class="nav-link" href="/logout">Đăng xuất</a>
@@ -84,42 +125,70 @@
 		      	</ul>
 		    </div>
 		</div>
-	</header> -->
+	</header>
     <div class = "container">
 	    <div class="left-section">
-	        <h1>Thông tin sách</h1>
-	        <h2>Tiêu đề: <span th:text="${bookDTO.title}"></span></h2>
-	    	<h2>Tác giả: <span th:text="${bookDTO.author}"></span></h2>
-	    	<h2>Giá: <span th:text="${bookDTO.price}"></span></h2>
-	    	
-	    	<h2>Mô tả: <span th:text = "${bookDTO.description}"></span> </h2>
-	        <img class = "image" th:src="@{${'/bookImages/' + bookDTO.imageName}}" alt="Bìa sách">
+	        <div class="book-infor">
+	        	<h1>Thông tin sách</h1>
+		        <h2>Tiêu đề: <span th:text="${bookDTO.title}"></span></h2>
+		    	<h2>Tác giả: <span th:text="${bookDTO.author}"></span></h2>
+		    	<h2>Giá: <span th:text="${bookDTO.price}"></span></h2>
+		    	
+		    	<h2>Mô tả: <span th:text = "${bookDTO.description}"></span> </h2>
+		        <img class = "image" th:src="@{${'/bookImages/' + bookDTO.imageName}}" alt="Bìa sách">
+	        </div>
+	        
+	        <div class="order">
+	        	<h2>Đặt mua</h2>
+			    <form th:action="@{/order/addorder/{idBook} (idBook = ${bookDTO.id})}" method="post" th:object="${order}" onsubmit="return confirm('Bạn có chắc chắn muốn đặt mua quyển sách này?')">
+			        <label for="quantity">Số lượng:</label>
+			        <input type="number" id="quantity" name="quantity" required> </br>
+			        <button class = "btn btn-success" type="submit"> Mua </button>
+			    </form>
+			    <div class="form-group error-message" th:if="${error}">
+			        <p th:text="${error}"></p>
+			    </div>
+	        </div>    
 	    </div>
 	    
-		<div class = "right-section">
-			<h2>Đặt mua</h2>
-		    <form th:action="@{/book/{id}/order (id=${book.id})}" method="post" th:object="${order}" onsubmit="return confirm('Bạn có chắc chắn muốn đặt mua quyển sách này?')">
-		        <label for="quantity">Số lượng:</label>
-		        <input type="number" id="quantity" name="quantity" required> </br>
-		        <input class = "btn btn-success" type="submit" value="Mua">
-		    </form>
-			<h2>Đánh giá</h2>
-		    <ul class="review-list">
-		        <li th:each="review : ${reviews}">
-		            <h3>Điểm: <span th:text="${review.rating}"></span></h3>
-		            <p>Nhận xét: <span th:text="${review.comment}"></span></p>
-		        </li>
-		    </ul>
-		 
-		    <h2>Thêm đánh giá</h2>
-		    <form th:action="@{/addReview/{id}(id=${book.id})}" method="post" th:object="${newReview}">
-		        <label for="rating">Điểm:</label>
-		        <input type="number" id="rating" name="rating" min="1" max="5" required>
-		        <label for="comment">Nội dung:</label>
-		        <textarea id="comment" name="comment" required> </textarea> </br>
-		        <input class = "btn btn-success" type="submit" value="Đánh giá">
-		    </form>
-	    </div>
+		 <div class = "right-section">
+		 	<h2>Đánh giá</h2>
+			<div class="reviews">
+			    <ul>
+			        <li th:each="reviewDTO : ${reviewDTOs}">
+			            <div class="review">
+			            	<div class="review__image">
+			            		<img  class="imageUser" th:src="@{${'/userImages/' + reviewDTO.userImage}}" alt="ảnh đại diện">
+			            	</div>
+			            	<div class="review__infor">
+				            	<div class="review__infor-top">
+				            		<div class="userFullname" th:text="${reviewDTO.userFullname}"></div>
+					            	<div class="rate">
+					            		<span th:text="'Đánh giá: ' + ${reviewDTO.rate} + '/5' "  class="rate-score"> </span>
+					            	</div>
+				            	</div>
+				            	
+				            	<div class="comment">
+				            		<span th:text="${reviewDTO.comment}" class="comment-content"> </span>
+				            	</div>
+
+			            	</div>
+			            </div>
+			        </li>
+			    </ul>
+			</div>
+		 	
+		 	<div class="addReview">
+			    <form th:action="@{/review/addReview/{idBook}(idBook=${bookDTO.id})}" method="post" th:object="${newReview}">
+			        <label for="rate">Rate:</label>
+			        <input type="number" id="rate" name="rate" min="1" max="5" required>
+			        <label for="comment">Nội dung:</label>
+			        <textarea id="comment" name="comment" required> </textarea> </br>
+			        <button class = "btn btn-success" type="submit"> Đánh giá </button>
+			    </form>
+		 	</div>
+		    
+	    </div> 
     </div>
 </body>
 </html>
