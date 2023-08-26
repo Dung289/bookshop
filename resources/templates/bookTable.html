@@ -7,11 +7,18 @@
 		rel="stylesheet" 
 		integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" 
 		crossorigin="anonymous">
+		<style>
+			.action{
+				display: flex;
+				margin: auto;
+			}
+			
+		</style>
 </head>
 <body>
-	<!-- <header class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<div class="container">
-			<div th:if="${!login}" class="collapse navbar-collapse justify-content-end" id="navbarNav">
+	<header class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<!-- <div class="container">
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 		    	<ul class="navbar-nav">
 		        	<li class="nav-item">
 		          		<a class="nav-link" href="/login">Đăng nhập</a>
@@ -20,11 +27,11 @@
 		          		<a class="nav-link" href="/register">Đăng ký</a>
 		        	</li>
 		      	</ul>
-		    </div>
-		    <div th:if="${admin}" class="collapse navbar-collapse justify-content-end" id="navbarNav">
+		    </div> -->
+		    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
 		    	<ul class="navbar-nav">
 		    		<li class="nav-item">
-		          		<a class="nav-link" href="/orders">Đơn hàng</a>
+		          		<a class="nav-link" href="/order/">Đơn hàng</a>
 		        	</li>
 		        	<li class="nav-item">
 		          		<a class="nav-link" href="/logout">Đăng xuất</a>
@@ -32,7 +39,7 @@
 		      	</ul>
 		    </div>
 		</div>
-	</header> -->
+	</header> 
 
 	
 	<div class = "container">
@@ -41,7 +48,7 @@
 		</div>
 		
 		<a th:href = "@{/book/{id} (id = -1)}"
-			class = "btn btn-success col-lg-12"> Add Book</a> 
+			class = "btn btn-success"> Add Book</a> 
 			
 		<table class = "table table-striped table-bordered">
 			<thead class = "table-dark">
@@ -62,7 +69,7 @@
 					<td th:text = "${book.category.name}"> </td>
 					<td th:text = "${book.numPage}"> </td>
 					<td th:text = "${book.quantitySold}"> </td>
-					<td> <a th:href = "@{/book/{id} (id = ${book.id})}"
+					<td class="action"> <a th:href = "@{/book/{id} (id = ${book.id})}"
 							class = "btn btn-success"> View </a>
 						 <form th:action="@{/book/delete/{id}(id=${book.id})}" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa?')">
                         		<input type="hidden" name="_method" value="DELETE">
