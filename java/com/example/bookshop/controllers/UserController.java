@@ -1,68 +1,59 @@
 package com.example.bookshop.controllers;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.bookshop.models.User;
 import com.example.bookshop.serviceImpl.UserServiceImpl;
 
 @Controller
+@RequestMapping("/user")
 public class UserController {
+	public static String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/userImages";
+	
+	
 	@Autowired
 	UserServiceImpl userServiceImpl;
-	
-	private Long userId;
-	
-	
-	public Long getUserId() {
-		return userId;
-	}
-
-	public void setUserId(Long userId) {
-		this.userId = userId;
-	}
-
-	@GetMapping("/login") 
-	public String showLoginPage() {
-		return "loginForm";
-	}
-	
-	@PostMapping("/login") 
-	public String login(Model model, @RequestParam String gmail, @RequestParam String password) {
-		Optional<User> opUser = userServiceImpl.getUserByGmailAndPassWord(gmail, password);
-		if (opUser.isPresent()) {
-			this.setUserId(opUser.get().getId());
-			return "redirect:/book/";
+	@GetMapping("/infor")
+	public String getMyInfor(Model model, @SessionAttribute(required = false) User user) {
+		if (user != null) {
+			model.addAttribute("user", user);
+			return "myInfor";
 		} else {
-			model.addAttribute("error", "Sai thông tin đăng nhập");
 			return "loginForm";
 		}
 	}
 	
-	@GetMapping("/register")
-	public String showRegisterPage() {
-		return ("registerForm");
-	}
-	
-	@PostMapping("/register")
-	public String register(Model model, @ModelAttribute User user) {
-		user.setRole("user");
-		user.setImageName("");
-		Optional<User> opUser = userServiceImpl.getUserByGmail(user.getGmail());
-		if (opUser.isPresent()) {
-			model.addAttribute("error", "Gmail đã được đăng ký");
-			return ("registerForm");
+	@PutMapping("/save/{id}")
+	public String updateUser(@ModelAttribute("user") User user1,
+							 @RequestParam("userImage") MultipartFile fileUserName,
+							 @RequestParam("imgName") String imgName, 
+							 @SessionAttribute(required = false) User user) throws IOException {
+		user.setFirstName(user1.getFirstName());
+		user.setLastName(user1.getLastName());
+		String imageUUID;
+		if(!fileUserName.isEmpty()) {
+			imageUUID=fileUserName.getOriginalFilename();
+			Path fileNameAndPath = Paths.get(uploadDir, imageUUID);
+			Files.write(fileNameAndPath, fileUserName.getBytes());
 		} else {
-			userServiceImpl.updateUser(user);
-			return "redirect:/login";
+			imageUUID = imgName;
 		}
-		
+		user.setImageName(imageUUID);
+		userServiceImpl.updateUser(user);
+		return "redirect:/book/";
 	}
 }
